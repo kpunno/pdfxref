@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { provider, auth, signInWithPopup, signOut } from "./firebase";
-import { getDocument } from "pdfjs-dist";
 import "./App.css";
 
 function App() {
   //#region variables
   const [user, setUser] = useState(null);
+  const [url, seturl] = useState(null);
   //#endregion
 
   //#region functions
@@ -15,7 +15,7 @@ function App() {
       const result = await signInWithPopup(auth, provider);
       setUser(result.user);
     } catch (err) {
-      // Remove console logs, need better logger (pino ??)
+      // TODO: Remove console logs, need better logger (pino ??)
       console.error("Login failed", err);
     }
   };
@@ -25,22 +25,39 @@ function App() {
   };
 
   //pdf
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type == "application/pdf") {
+      const url = URL.createObjectURL(file);
+      seturl(url);
+    }
+  }
   // ... <object></object>
-  
+
   //#endregion
 
   //#region jsx
   return (
     <div>
       {user ? (
-        <div>
+        <>
           <p>{user.displayName}</p>
           <button onClick={handleLogout}>Sign out</button>
-        </div>
+        </>
       ) : (
-        <div>
-          <button onClick={handleLogin}>Sign in</button>
-        </div>
+        <button onClick={handleLogin}>Sign in</button>
+      )}
+      <p>Drop your file below</p>
+      <input type="file" onChange={handleFileUpload}></input>
+      {url && (
+        <object
+          data={url}
+          type="application/pdf"
+          width="100%"
+          height="600px"
+        >
+          <p>bad!!</p>
+        </object>
       )}
     </div>
   );
