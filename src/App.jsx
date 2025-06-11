@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { provider, auth, signInWithPopup, signOut } from "./firebase";
 import "./App.css";
+import PDF from "../components/pdf"
 
 function App() {
   //#region variables
@@ -31,7 +32,7 @@ function App() {
       const url = URL.createObjectURL(file);
       seturl(url);
     }
-  }
+  };
   // ... <object></object>
 
   //#endregion
@@ -49,17 +50,13 @@ function App() {
       )}
       <p>Drop your file below</p>
       <input type="file" onChange={handleFileUpload}></input>
+
       {url && (
-        <object
-          data={url}
-          type="application/pdf"
-          width="100%"
-          height="600px"
-        >
-          <p>bad!!</p>
-        </object>
+        
+        <PDF url={url}/>
       )}
     </div>
+    
   );
   //#endregion
 }
