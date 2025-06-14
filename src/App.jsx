@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { provider, auth, signInWithPopup, signOut } from "./firebase";
 import "./App.css";
-import PDF from "../components/pdf"
+import PDF from "../components/renderpdf"
 
 function App() {
   //#region variables
@@ -31,6 +31,7 @@ function App() {
     if (file && file.type == "application/pdf") {
       const url = URL.createObjectURL(file);
       seturl(url);
+      console.log("HFU triggered")
     }
   };
   // ... <object></object>
