@@ -4,18 +4,41 @@ import "react-pdf/dist/esm/Page/TextLayer.css";
 import { useEffect, useRef, useState } from "react";
 import { Document } from "react-pdf";
 import LazyPage from "./lazypage";
+import { isCancelException } from "react-pdf/src/shared/utils.js";
 
 const PDF = ({ url }) => {
   const advancedPagesCount = 5;
+  const [renderLength, setRenderLength] = useState(advancedPagesCount);
   const [numPages, setNumPages] = useState(null);
   const [pageIndex, setPageIndex] = useState(0);
+  const [firstPage, setFirstPage] = useState(1);
   const pagesLoadedRef = useRef(0);
   /*
   const [bookmarks, setBookmarks] = useState([]);
   */
 
+  /* TODO: Check for upper bound as well (index <= numPages - 1)
+      Only checks lower bound as is (index needs >= zero)
+     TODO: Possibly offload array indexing elsewhere
+  */
   useEffect(() => {
+    // set array dimensions
+    // (can't go negative for page index)
     console.log(`Current page is: ${pageIndex + 1}`);
+    // page rendering beginning and end index
+    let pagesBegin = pageIndex - advancedPagesCount;
+    let pagesEnd = pageIndex + advancedPagesCount;
+    // check if page index is valid
+    const firstIndex = pageIndex - advancedPagesCount;
+    if(firstIndex < 0) {
+      // if invalid, set begin as 0
+      setFirstPage(0);
+    } 
+    else {
+      setFirstPage(pagesBegin);
+    }
+    
+    setRenderLength(pagesEnd - pagesBegin)
   }, [pageIndex]);
 
   const pageRefs = useRef({});
@@ -57,8 +80,8 @@ const PDF = ({ url }) => {
 
       <Document file={url} onLoadSuccess={onLoadSuccess}>
         {numPages &&
-          Array.from({ length: advancedPagesCount }, (_, index) => {
-            const page = index + pageIndex + 1;
+          Array.from({ length: renderLength }, (_, index) => {
+            const page = firstPage + index + 1;
             if ( page > numPages ) return null;
             return (
               <LazyPage
