@@ -8,13 +8,6 @@ const LazyPage = ({ pageNumber, onPageChange, onPageLoad }) => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const el = document.getElementById(`p${pageNumber}`);
-    if (el) {
-      el.scrollIntoView({ block: "center" });
-    }
-  }, [pageNumber]);
-
-  useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
