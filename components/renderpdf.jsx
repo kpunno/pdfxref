@@ -4,7 +4,6 @@ import "react-pdf/dist/esm/Page/TextLayer.css";
 import { useEffect, useRef, useState } from "react";
 import { Document } from "react-pdf";
 import LazyPage from "./lazypage";
-import { isCancelException } from "react-pdf/src/shared/utils.js";
 
 const PDF = ({ url }) => {
   const advancedPagesCount = 5;
@@ -12,7 +11,7 @@ const PDF = ({ url }) => {
   const [numPages, setNumPages] = useState(null);
   const [pageIndex, setPageIndex] = useState(0);
   const [firstPage, setFirstPage] = useState(1);
-  const pagesLoadedRef = useRef(0);
+
   /*
   const [bookmarks, setBookmarks] = useState([]);
   */
@@ -57,6 +56,7 @@ const PDF = ({ url }) => {
     console.log(numPages);
   };
 
+  /*
   const onPageLoaded = () => {
     pagesLoadedRef.current += 1;
     if(pagesLoadedRef.current === numPages) {
@@ -65,6 +65,7 @@ const PDF = ({ url }) => {
       console.log(`Loaded ${pagesLoadedRef.current} of ${numPages}`);
     }
   }
+  */
 
   /*
   const handlePageSearch = ({ target: {value} }) => {
@@ -88,7 +89,7 @@ const PDF = ({ url }) => {
                 key={page}
                 pageNumber={page}
                 onPageChange={setPageIndex}
-                onPageLoad={onPageLoaded}
+                /*onPageLoad={onPageLoaded}*/
               />
             );
           })};
