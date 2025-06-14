@@ -3,7 +3,7 @@ import { Page } from "react-pdf";
 
 // TODO: Make each component height of device approx.
 
-const LazyPage = ({ pageNumber, onPageChange }) => {
+const LazyPage = ({ pageNumber, onPageChange, onPageLoad }) => {
   const ref = useRef();
   const [visible, setVisible] = useState(false);
 
@@ -31,14 +31,13 @@ const LazyPage = ({ pageNumber, onPageChange }) => {
     if (ref.current) {
       observer.observe(ref.current);
     }
-
     return () => observer.disconnect();
   }, []);
 
   return (
     <div id={`p${pageNumber}`} ref={ref} style={{ minHeight: "100vh", marginBottom: "2px" }}>
       {visible ? (
-        <Page pageNumber={pageNumber} />
+        <Page pageNumber={pageNumber} onLoadSuccess={onPageLoad} />
       ) : (
         <p>Loading page {pageNumber}...</p>
       )}

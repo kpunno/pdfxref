@@ -8,7 +8,8 @@ import LazyPage from "./lazypage";
 const PDF = ({ url }) => {
   const advancedPagesCount = 5;
   const [numPages, setNumPages] = useState(null);
-  const [pageIndex, setPageIndex] = useState(4);
+  const [pageIndex, setPageIndex] = useState(0);
+  const pagesLoadedRef = useRef(0);
   /*
   const [bookmarks, setBookmarks] = useState([]);
   */
@@ -33,12 +34,20 @@ const PDF = ({ url }) => {
     console.log(numPages);
   };
 
+  const onPageLoaded = () => {
+    pagesLoadedRef.current += 1;
+    if(pagesLoadedRef.current === numPages) {
+      console.log("All pages loaded.");
+    } else {
+      console.log(`Loaded ${pagesLoadedRef.current} of ${numPages}`);
+    }
+  }
+
   /*
   const handlePageSearch = ({ target: {value} }) => {
     setPageIndex(value + 1);
   }
   */
-  
 
   return (
     <div>
@@ -48,13 +57,18 @@ const PDF = ({ url }) => {
 
       <Document file={url} onLoadSuccess={onLoadSuccess}>
         {numPages &&
-          Array.from({ length: advancedPagesCount }, (_, index) => (
-            <LazyPage
-              key={index}
-              pageNumber={index + 1}
-              onPageChange={(i) => setPageIndex(i)}
-            />
-          ))}
+          Array.from({ length: advancedPagesCount }, (_, index) => {
+            const page = index + pageIndex + 1;
+            if ( page > numPages ) return null;
+            return (
+              <LazyPage
+                key={page}
+                pageNumber={page}
+                onPageChange={setPageIndex}
+                onPageLoad={onPageLoaded}
+              />
+            );
+          })};
       </Document>
     </div>
   );
